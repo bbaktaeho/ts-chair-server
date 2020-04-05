@@ -1,6 +1,7 @@
 import config from "./config";
 import * as express from "express";
 import Logger from "./loaders/logger";
+import loding from "./loaders";
 
 async function startServer() {
   const app = express();
@@ -11,7 +12,7 @@ async function startServer() {
    * Well, at least in node 10 without babel and at the time of writing
    * So we are using good old require.
    **/
-  await require("./loaders").default({ expressApp: app });
+  await loding({ expressApp: app });
 
   app.listen(config.port, (err) => {
     if (err) {
