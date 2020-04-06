@@ -1,5 +1,5 @@
 // import attachCurrentUser from './attachCurrentUser';
-import isAuth from "./isAuth";
+import { isAuth } from "./isAuth";
 
 export default {
   //   attachCurrentUser,
