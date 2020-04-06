@@ -11,7 +11,11 @@ export default (app: Router) => {
 
   router.post("/login", (req: Request, res: Response) => {});
   router.post("/signup", (req: Request, res: Response) => {});
-  router.get("/account", (req: Request, res: Response) => {});
+  router.get(
+    "/account",
+    middlewares.jwtVerify,
+    (req: Request, res: Response) => {}
+  );
   router.put("/emailmodify", (req: Request, res: Response) => {});
   router.put("/passwordmodify", (req: Request, res: Response) => {});
   router.put("/login/check", (req: Request, res: Response) => {});

@@ -2,10 +2,6 @@ import { verify, sign } from "jsonwebtoken";
 import config from "../../config";
 import { Request, Response, NextFunction } from "express";
 
-interface IRequest extends Request {
-  user: any;
-}
-
 /**
  * We are assuming that the JWT will come in a header with the form
  *
@@ -32,14 +28,23 @@ interface IRequest extends Request {
 //   return null;
 // };
 
-const isAuth = (req: IRequest, res: Response, next: NextFunction) => {
-  verify(req.body.token, config.jwtSecret, (err: Error, data: any) => {
-    if (err) return console.error(err);
-    else {
-      req.user = data.user;
-      next();
-    }
-  });
+const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    verify(req.body.token, config.jwtSecret, (err: Error, data: any) => {
+      if (err) return console.error(err);
+      else {
+        req.user = data.user;
+        next();
+      }
+    });
+  } catch (err) {}
 };
 
-export { isAuth };
+const jwtSign = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = sign({ user: req.user }, config.jwtSecret);
+    req.headers["tk"] = token;
+  } catch (err) {}
+};
+
+export { jwtVerify, jwtSign };

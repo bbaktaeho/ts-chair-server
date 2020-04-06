@@ -5,7 +5,7 @@ import User, { associate as associateUser } from "./user";
 // import Image, { associate as associateImage } from "./image";
 export * from "./sequelize"; // 임포트 함과 동시에 수출
 
-const db = {
+export const db = {
   User,
   //   Comment,
   //   Hashtag,
