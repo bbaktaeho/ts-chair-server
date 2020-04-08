@@ -43,7 +43,7 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
 const jwtSign = (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = sign({ user: req.user }, config.jwtSecret);
-    req.headers["tk"] = token;
+    req.headers["authorization"] = token;
   } catch (err) {}
 };
 

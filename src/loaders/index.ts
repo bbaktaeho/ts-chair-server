@@ -3,11 +3,19 @@ import { Application } from "express";
 // import dependencyInjectorLoader from "./dependencyInjector";
 // import jobsLoader from "./jobs";
 import Logger from "./logger";
-//We have to import at least all the events once so they can be triggered
-// import "./events";
+import { sequelize } from "../models";
 
 export default async ({ expressApp }: { expressApp: Application }) => {
-  Logger.info("✌️ DB loaded and connected!");
+  sequelize
+    .sync({ force: false })
+    .then(() => {
+      Logger.info("✌️ DB loaded and connected!");
+    })
+    .catch((err: Error) => {
+      console.error(err.message);
+
+      Logger.error("DB loaded and error!");
+    });
 
   /**
    * WTF is going on here?
@@ -18,7 +26,7 @@ export default async ({ expressApp }: { expressApp: Application }) => {
    */
 
   //   await jobsLoader({ agenda });
-  Logger.info("✌️ Jobs loaded");
+  // Logger.info("✌️ Jobs loaded");
 
   await expressLoader({ app: expressApp });
   Logger.info("✌️ Express loaded");
