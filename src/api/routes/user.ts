@@ -9,12 +9,16 @@ export default (app: Router) => {
     return res.json({ test: "hi" }).status(200);
   });
 
-  router.post("/login", (req: Request, res: Response) => {});
-  router.post("/signup", (req: Request, res: Response) => {});
+  router.post(
+    "/login",
+    middlewares.jwtSign,
+    async (req: Request, res: Response) => {}
+  );
+  router.post("/signup", async (req: Request, res: Response) => {});
   router.get(
     "/account",
     middlewares.jwtVerify,
-    (req: Request, res: Response) => {}
+    async (req: Request, res: Response) => {}
   );
   router.put("/emailmodify", (req: Request, res: Response) => {});
   router.put("/passwordmodify", (req: Request, res: Response) => {});

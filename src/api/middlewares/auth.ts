@@ -37,14 +37,18 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
         next();
       }
     });
-  } catch (err) {}
+  } catch (err) {
+    return res.status(403).json({ success: false, message: err.message });
+  }
 };
 
 const jwtSign = (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = sign({ user: req.user }, config.jwtSecret);
     req.headers["authorization"] = token;
-  } catch (err) {}
+  } catch (err) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
 };
 
 export { jwtVerify, jwtSign };
