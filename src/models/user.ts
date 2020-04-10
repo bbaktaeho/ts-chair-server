@@ -23,13 +23,14 @@ class User extends Model {
 
 User.init(
   {
-    nickname: {
-      type: DataTypes.STRING(20),
-    },
-    userId: {
+    email: {
       type: DataTypes.STRING(20),
       allowNull: false,
       unique: true,
+    },
+    name: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
     },
     password: {
       type: DataTypes.STRING(100),

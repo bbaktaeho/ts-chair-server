@@ -51,6 +51,9 @@ export default class UserService {
       });
       return UserServiceReturn(true, newUser, 200);
     } catch (signUpError) {
+      console.error(signUpError.message);
+
+      throw signUpError;
       return UserServiceReturn(false, signUpError.message, 500);
     }
   }
