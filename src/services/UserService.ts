@@ -137,17 +137,25 @@ export default class UserService {
         );
       else {
         const selectUser = await User.findOne({ where: { email: user.email } });
-        if (!(await bcrypt.compare(password, selectUser.dataValues.password)))
-          result = this.UserServiceReturn(false, "password is defferent", 400);
+        if (!selectUser)
+          result = this.UserServiceReturn(false, "user is not exists", 400);
         else {
-          const hashPassword = await bcrypt.hash(newPassword, 12);
-          const updateUser = await User.update(
-            { password: hashPassword },
-            { where: { email: user.email } }
-          );
-          if (updateUser[0] == 1)
-            result = this.UserServiceReturn(true, updateUser, 200);
-          else result = this.UserServiceReturn(false, "update fail", 400);
+          if (!(await bcrypt.compare(password, selectUser.dataValues.password)))
+            result = this.UserServiceReturn(
+              false,
+              "password is defferent",
+              400
+            );
+          else {
+            const hashPassword = await bcrypt.hash(newPassword, 12);
+            const updateUser = await User.update(
+              { password: hashPassword },
+              { where: { email: user.email } }
+            );
+            if (updateUser[0] == 1)
+              result = this.UserServiceReturn(true, updateUser, 200);
+            else result = this.UserServiceReturn(false, "update fail", 400);
+          }
         }
       }
     } catch (passwordModifyError) {
@@ -173,6 +181,32 @@ export default class UserService {
       }
     } catch (loginCheckError) {
       result = this.UserServiceReturn(false, loginCheckError.message, 500);
+    } finally {
+      return result;
+    }
+  }
+
+  // 회원탈퇴 비지니스 로직
+  public async withdrawal(user: UserDTO, password: string): Promise<any> {
+    let result: { success: boolean; result: any; statusCode: number } | any;
+    try {
+      if (!password)
+        result = this.UserServiceReturn(false, "password is null", 400);
+      else {
+        const selectUser = await User.findOne({ where: { email: user.email } });
+        if (!(await bcrypt.compare(password, selectUser.dataValues.password)))
+          result = this.UserServiceReturn(false, "password is different", 400);
+        else {
+          const deleteUser = await User.destroy({
+            where: { email: user.email },
+          });
+          if (deleteUser == 1)
+            result = this.UserServiceReturn(true, deleteUser, 200);
+          else result = this.UserServiceReturn(false, "withdrawal fail", 400);
+        }
+      }
+    } catch (withdrawalError) {
+      result = this.UserServiceReturn(false, withdrawalError.message, 500);
     } finally {
       return result;
     }

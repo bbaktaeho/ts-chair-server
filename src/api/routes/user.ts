@@ -42,7 +42,7 @@ export default (app: Router) => {
     "/account",
     middlewares.jwtVerify,
     async (req: Request, res: Response) => {
-      res.status(200).json({ success: true, user: req.user });
+      res.status(200).json({ success: true, message: "", user: req.user });
     }
   );
 
@@ -86,13 +86,27 @@ export default (app: Router) => {
     middlewares.jwtVerify,
     async (req: Request, res: Response) => {
       const check = req.body.check;
-      const { success, result, status } = await new UserService().loginCheck(
-        req.user!,
-        check
-      );
+      const {
+        success,
+        result,
+        statusCode,
+      } = await new UserService().loginCheck(req.user!, check);
+      res.status(statusCode).json({ success, message: result });
     }
   );
 
   // 회원 탈퇴
-  router.delete("/withdrawal", (req: Request, res: Response) => {});
+  router.delete(
+    "/withdrawal",
+    middlewares.jwtVerify,
+    async (req: Request, res: Response) => {
+      const password = req.body.password;
+      const {
+        success,
+        result,
+        statusCode,
+      } = await new UserService().withdrawal(req.user!, password);
+      res.status(statusCode).json({ success, message: result });
+    }
+  );
 };
