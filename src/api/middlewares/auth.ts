@@ -30,25 +30,20 @@ import { Request, Response, NextFunction } from "express";
 
 const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
   try {
-    verify(req.body.token, config.jwtSecret, (err: Error, data: any) => {
-      if (err) return console.error(err);
-      else {
-        req.user = data.user;
-        next();
+    verify(
+      req.get("token") as string,
+      config.jwtSecret,
+      (err: Error, data: any) => {
+        if (err) return next(err);
+        else {
+          req.user = data;
+          next();
+        }
       }
-    });
+    );
   } catch (err) {
     return res.status(403).json({ success: false, message: err.message });
   }
 };
 
-const jwtSign = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = sign({ user: req.user }, config.jwtSecret);
-    req.headers["authorization"] = token;
-  } catch (err) {
-    return res.status(400).json({ success: false, message: err.message });
-  }
-};
-
-export { jwtVerify, jwtSign };
+export { jwtVerify };

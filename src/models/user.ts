@@ -24,12 +24,12 @@ class User extends Model {
 User.init(
   {
     email: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
     },
     name: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     password: {

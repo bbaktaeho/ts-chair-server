@@ -1,8 +1,7 @@
 // import attachCurrentUser from './attachCurrentUser';
-import { jwtSign, jwtVerify } from "./auth";
+import { jwtVerify } from "./auth";
 
 export default {
   //   attachCurrentUser,
-  jwtSign,
   jwtVerify,
 };

@@ -7,32 +7,54 @@ const router = Router();
 export default (app: Router) => {
   app.use("/users", router);
 
-  router.get("/me", (req: Request, res: Response) => {
-    return res.json({ test: "hi" }).status(200);
+  // 로그인 라우터
+  router.post("/login", async (req: Request, res: Response) => {
+    const user: UserDTO = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+    const { success, result, statusCode } = await new UserService().signIn(
+      user
+    );
+    if (success) {
+      res.setHeader("token", JSON.stringify(result));
+      res.status(statusCode).json({ success, result: "login success" });
+    } else {
+      res.status(statusCode).json({ success, result });
+    }
   });
 
-  router.post(
-    "/login",
-    middlewares.jwtSign,
-    async (req: Request, res: Response) => {}
-  );
+  // 회원가입 라우터
   router.post("/signup", async (req: Request, res: Response) => {
     const user: UserDTO = {
       email: req.body.email,
       password: req.body.password,
       name: req.body.name,
     };
-    const signUp = new UserService().signUp;
-    const { success, result, statusCode } = await signUp(user);
+    const { success, result, statusCode } = await new UserService().signUp(
+      user
+    );
     res.status(statusCode).json({ success, result });
   });
+
+  // 내 정보 라우터
   router.get(
     "/account",
     middlewares.jwtVerify,
-    async (req: Request, res: Response) => {}
+    async (req: Request, res: Response) => {
+      console.log(req.user);
+    }
   );
-  router.put("/emailmodify", (req: Request, res: Response) => {});
-  router.put("/passwordmodify", (req: Request, res: Response) => {});
+
+  // 이메일 수정 라우터
+  router.put("/account/emailmodify", (req: Request, res: Response) => {});
+
+  // 비밀번호 수정 라우터
+  router.put("/account/passwordmodify", (req: Request, res: Response) => {});
+
+  // 첫 로그인 체크
   router.put("/login/check", (req: Request, res: Response) => {});
+
+  // 회원 탈퇴
   router.delete("/withdrawal", (req: Request, res: Response) => {});
 };
