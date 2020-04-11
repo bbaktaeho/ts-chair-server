@@ -4,6 +4,7 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as nodemailer from "nodemailer";
 import config from "../config";
+import * as crypto from "crypto";
 
 export default class UserService {
   constructor() {}
@@ -26,6 +27,7 @@ export default class UserService {
   }
 
   private async sendMail(user: UserDTO): Promise<any> {
+    const temporaryPassword = crypto.randomBytes(4).toString("hex");
     try {
       const transporter = nodemailer.createTransport({
         host: "smpt.gmail.com",
@@ -41,9 +43,13 @@ export default class UserService {
       const info = await transporter.sendMail({
         from: "🔥의자소통(chairCommunication) <inuchair@gmail.com>", // sender address
         to: user.email, // list of receivers
-        subject: "🔥test ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
+        subject: "🔥임시 비밀번호 ✔", // Subject line
+        html: `<p>${temporaryPassword} 이거로 로그인해라</p>
+        <form action="http://localhost:${config.port}/api/users/temporary/password" method="post">
+         <input type="hidden" name="email" value="${user.email}">
+         <input type="hidden" name="tmpPassword" value="${temporaryPassword}">
+         <input type="submit" name="btn1" value="비밀번호 변경하기" />
+       </form>`, // html body
       });
       if (info) return true;
       else return false;
@@ -149,7 +155,7 @@ export default class UserService {
     }
   }
 
-  // 비밀번호수정 비지니스 로직
+  // 비밀번호 수정 비지니스 로직
   public async passwordModify(
     user: UserDTO,
     password: string,
@@ -234,6 +240,38 @@ export default class UserService {
       }
     } catch (findPasswordError) {
       result = this.UserServiceReturn(false, findPasswordError.message, 500);
+    } finally {
+      return result;
+    }
+  }
+
+  // 임시 비밀번호 변경 비지니스 로직
+  public async temporaryPassword(user: UserDTO): Promise<any> {
+    let result: { success: boolean; result: any; statusCode: number } | any;
+    try {
+      if (!(user.email && user.password))
+        result = this.UserServiceReturn(false, "dto error", 400);
+      else {
+        const selectUser = await User.findOne({ where: { email: user.email } });
+        if (!selectUser)
+          result = this.UserServiceReturn(false, "user is not exists", 404);
+        else {
+          const hashPassword = await bcrypt.hash(user.password, 12);
+          const updateUser = await User.update(
+            { password: hashPassword },
+            { where: { email: user.email } }
+          );
+          if (updateUser[0] == 1)
+            result = this.UserServiceReturn(true, "update", 200);
+          else result = this.UserServiceReturn(false, "failed", 400);
+        }
+      }
+    } catch (temporaryPasswordError) {
+      result = this.UserServiceReturn(
+        false,
+        temporaryPasswordError.message,
+        500
+      );
     } finally {
       return result;
     }

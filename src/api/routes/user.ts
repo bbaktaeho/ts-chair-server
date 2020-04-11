@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import middlewares from "../middlewares";
 import UserService from "../../services/UserService";
 import { UserDTO } from "../../interface/UserDTO";
+import * as crypto from "crypto";
 const router = Router();
 
 export default (app: Router) => {
@@ -101,6 +102,20 @@ export default (app: Router) => {
       result,
       statusCode,
     } = await new UserService().findPassword(user);
+    res.status(statusCode).json({ success, message: result });
+  });
+
+  // 임시 비밀번호 발급 라우터
+  router.post("/temporary/password", async (req, res) => {
+    const user: UserDTO = {
+      email: req.body.email,
+      password: req.body.tmpPassword,
+    };
+    const {
+      success,
+      result,
+      statusCode,
+    } = await new UserService().temporaryPassword(user);
     res.status(statusCode).json({ success, message: result });
   });
 
