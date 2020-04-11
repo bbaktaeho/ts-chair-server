@@ -42,12 +42,23 @@ export default (app: Router) => {
     "/account",
     middlewares.jwtVerify,
     async (req: Request, res: Response) => {
-      console.log(req.user);
+      res.status(200).json({ success: true, user: req.user });
     }
   );
 
   // 이메일 수정 라우터
-  router.put("/account/emailmodify", (req: Request, res: Response) => {});
+  router.put(
+    "/account/emailmodify",
+    middlewares.jwtVerify,
+    async (req: Request, res: Response) => {
+      const newEmail = req.body.email;
+      const {
+        success,
+        result,
+        statusCode,
+      } = await new UserService().emailModify(req.user!, newEmail);
+    }
+  );
 
   // 비밀번호 수정 라우터
   router.put("/account/passwordmodify", (req: Request, res: Response) => {});

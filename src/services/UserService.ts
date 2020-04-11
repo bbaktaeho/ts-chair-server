@@ -44,7 +44,10 @@ export default class UserService {
         if (!exUser)
           result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
+          delete exUser.dataValues.id;
           delete exUser.dataValues.password;
+          delete exUser.dataValues.createdAt;
+          delete exUser.dataValues.updatedAt;
           console.log(exUser.dataValues);
 
           const token = await this.newToken(exUser.dataValues);
@@ -81,6 +84,20 @@ export default class UserService {
       result = this.UserServiceReturn(false, signUpError.message, 500);
     } finally {
       return result;
+    }
+  }
+
+  // 이메일수정 비지니스 로직
+  public async emailModify(
+    user: UserDTO,
+    newEmail: string
+  ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
+    let result: { success: boolean; result: any; statusCode: number } | any;
+    try {
+      User.update({ email: newEmail }, { where: { email: user.email } });
+    } catch (emailModifyError) {
+      result = this.UserServiceReturn(false, emailModifyError.message, 500);
+    } finally {
     }
   }
 }

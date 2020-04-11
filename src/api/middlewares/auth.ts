@@ -34,15 +34,16 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
       req.get("token") as string,
       config.jwtSecret,
       (err: Error, data: any) => {
-        if (err) return next(err);
-        else {
+        if (err) {
+          next(err);
+        } else {
           req.user = data;
           next();
         }
       }
     );
   } catch (err) {
-    return res.status(403).json({ success: false, message: err.message });
+    next(err);
   }
 };
 
