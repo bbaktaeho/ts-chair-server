@@ -65,7 +65,7 @@ export default (app: Router) => {
   router.put(
     "/account/passwordmodify",
     middlewares.jwtVerify,
-    async (req: Request, res: Response) => {
+    async (req, res) => {
       const { password, newPassword } = req.body;
       const {
         success,
@@ -80,22 +80,31 @@ export default (app: Router) => {
     }
   );
 
-  // 첫 로그인 체크
-  router.put(
-    "/login/check",
-    middlewares.jwtVerify,
-    async (req: Request, res: Response) => {
-      const check = req.body.check;
-      const {
-        success,
-        result,
-        statusCode,
-      } = await new UserService().loginCheck(req.user!, check);
-      res.status(statusCode).json({ success, message: result });
-    }
-  );
+  // 첫 로그인 체크 라우터
+  router.put("/login/check", middlewares.jwtVerify, async (req, res) => {
+    const check = req.body.check;
+    const { success, result, statusCode } = await new UserService().loginCheck(
+      req.user!,
+      check
+    );
+    res.status(statusCode).json({ success, message: result });
+  });
 
-  // 회원 탈퇴
+  // 비밀번호 찾기 라우터
+  router.post("/find/password", async (req, res) => {
+    const user: UserDTO = {
+      email: req.body.email,
+      name: req.body.name,
+    };
+    const {
+      success,
+      result,
+      statusCode,
+    } = await new UserService().findPassword(user);
+    res.status(statusCode).json({ success, message: result });
+  });
+
+  // 회원 탈퇴 라우터
   router.delete(
     "/withdrawal",
     middlewares.jwtVerify,

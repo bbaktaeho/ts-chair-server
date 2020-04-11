@@ -1,14 +1,16 @@
 import { Router } from "express";
-// import auth from './routes/auth';
 import user from "./routes/user";
-// import agendash from './routes/agendash';
+import posture from "./routes/posture";
+import statistic from "./routes/statistic";
 
 // guaranteed to get dependencies
 export default () => {
   const app = Router();
-  // auth(app);
+
+  // 라우터 등록
   user(app);
-  // agendash(app);
+  posture(app);
+  statistic(app);
 
   return app;
 };

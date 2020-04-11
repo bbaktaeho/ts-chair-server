@@ -2,8 +2,8 @@ import { UserDTO } from "../interface/UserDTO";
 import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import * as dotenv from "dotenv";
-dotenv.config();
+import * as nodemailer from "nodemailer";
+import config from "../config";
 
 export default class UserService {
   constructor() {}
@@ -18,11 +18,39 @@ export default class UserService {
 
   private async newToken(user: UserDTO): Promise<string | null> {
     return new Promise((resolve) => {
-      jwt.sign(JSON.stringify(user), process.env.JWT_SECRET!, (err, token) => {
+      jwt.sign(JSON.stringify(user), config.jwtSecret, (err, token) => {
         if (err) resolve(null);
         else resolve(token);
       });
     });
+  }
+
+  private async sendMail(user: UserDTO): Promise<any> {
+    console.log(1);
+    try {
+      const transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        auth: {
+          user: config.serviceEmail, // generated ethereal user
+          pass: config.servicePassword, // generated ethereal password
+        },
+      });
+      console.log(2);
+
+      const info = await transporter.sendMail({
+        from: config.serviceEmail, // sender address
+        to: user.email, // list of receivers
+        subject: "🔥의자소통(chairCommunication) ✔", // Subject line
+        text: "Hello world?", // plain text body
+        html: "<b>Hello world?</b>", // html body
+      });
+      if (info) console.log(info);
+      else console.log(info);
+    } catch (sendMailError) {
+      console.log(sendMailError.message);
+    } finally {
+      console.log("finally");
+    }
   }
 
   /**
@@ -181,6 +209,30 @@ export default class UserService {
       }
     } catch (loginCheckError) {
       result = this.UserServiceReturn(false, loginCheckError.message, 500);
+    } finally {
+      return result;
+    }
+  }
+
+  // 비밀번호 찾기 비지니스 로직
+  public async findPassword(user: UserDTO): Promise<any> {
+    let result: { success: boolean; result: any; statusCode: number } | any;
+    try {
+      if (!(user.email && user.name))
+        result = this.UserServiceReturn(false, "dto error", 400);
+      else {
+        const selectUser = await User.findOne({
+          where: { email: user.email, name: user.name },
+        });
+        if (!selectUser)
+          result = this.UserServiceReturn(false, "user is not exists", 404);
+        else {
+          await this.sendMail(user);
+          result = this.UserServiceReturn(true, "check your email", 200);
+        }
+      }
+    } catch (findPasswordError) {
+      result = this.UserServiceReturn(false, findPasswordError.message, 500);
     } finally {
       return result;
     }
