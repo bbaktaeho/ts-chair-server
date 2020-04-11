@@ -135,13 +135,19 @@ export default class UserService {
           400
         );
       else {
-        const updateUser = await User.update(
-          { password: newPassword },
-          { where: { email: user.email, password } }
-        );
-        if (updateUser[0] == 1)
-          result = this.UserServiceReturn(true, updateUser, 200);
-        else result = this.UserServiceReturn(false, "update fail", 400);
+        const selectUser = await User.findOne({ where: { email: user.email } });
+        if (!(await bcrypt.compare(password, selectUser.dataValues.password)))
+          result = this.UserServiceReturn(false, "password is defferent", 400);
+        else {
+          const hashPassword = await bcrypt.hash(newPassword, 12);
+          const updateUser = await User.update(
+            { password: hashPassword },
+            { where: { email: user.email } }
+          );
+          if (updateUser[0] == 1)
+            result = this.UserServiceReturn(true, updateUser, 200);
+          else result = this.UserServiceReturn(false, "update fail", 400);
+        }
       }
     } catch (passwordModifyError) {
       result = this.UserServiceReturn(false, passwordModifyError.message, 500);
