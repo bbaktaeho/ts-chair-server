@@ -18,9 +18,9 @@ export default (app: Router) => {
     );
     if (success) {
       res.setHeader("token", JSON.stringify(result));
-      res.status(statusCode).json({ success, result: "login success" });
+      res.status(statusCode).json({ success, message: "login success" });
     } else {
-      res.status(statusCode).json({ success, result });
+      res.status(statusCode).json({ success, message: result });
     }
   });
 
@@ -34,7 +34,7 @@ export default (app: Router) => {
     const { success, result, statusCode } = await new UserService().signUp(
       user
     );
-    res.status(statusCode).json({ success, result });
+    res.status(statusCode).json({ success, message: result });
   });
 
   // 내 정보 라우터
@@ -57,12 +57,28 @@ export default (app: Router) => {
         result,
         statusCode,
       } = await new UserService().emailModify(req.user!, newEmail);
-      res.status(statusCode).json({ success, result });
+      res.status(statusCode).json({ success, message: result });
     }
   );
 
   // 비밀번호 수정 라우터
-  router.put("/account/passwordmodify", (req: Request, res: Response) => {});
+  router.put(
+    "/account/passwordmodify",
+    middlewares.jwtVerify,
+    async (req: Request, res: Response) => {
+      const { password, newPassword } = req.body;
+      const {
+        success,
+        result,
+        statusCode,
+      } = await new UserService().passwordModify(
+        req.user!,
+        password,
+        newPassword
+      );
+      res.status(statusCode).json({ success, message: result });
+    }
+  );
 
   // 첫 로그인 체크
   router.put("/login/check", (req: Request, res: Response) => {});

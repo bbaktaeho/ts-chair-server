@@ -48,8 +48,6 @@ export default class UserService {
           delete exUser.dataValues.password;
           delete exUser.dataValues.createdAt;
           delete exUser.dataValues.updatedAt;
-          console.log(exUser.dataValues);
-
           const token = await this.newToken(exUser.dataValues);
           if (token) result = this.UserServiceReturn(true, token, 200);
         }
@@ -107,6 +105,35 @@ export default class UserService {
       }
     } catch (emailModifyError) {
       result = this.UserServiceReturn(false, emailModifyError.message, 500);
+    } finally {
+      return result;
+    }
+  }
+
+  public async passwordModify(
+    user: UserDTO,
+    password: string,
+    newPassword: string
+  ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
+    let result: { success: boolean; result: any; statusCode: number } | any;
+    try {
+      if (!(password && newPassword))
+        result = this.UserServiceReturn(
+          false,
+          "password or newPassword is null",
+          400
+        );
+      else {
+        const updateUser = await User.update(
+          { password: newPassword },
+          { where: { email: user.email, password } }
+        );
+        if (updateUser[0] == 1)
+          result = this.UserServiceReturn(true, updateUser, 200);
+        else result = this.UserServiceReturn(false, "update fail", 400);
+      }
+    } catch (passwordModifyError) {
+      result = this.UserServiceReturn(false, passwordModifyError.message, 500);
     } finally {
       return result;
     }

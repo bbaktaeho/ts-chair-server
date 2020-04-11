@@ -35,7 +35,9 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
       config.jwtSecret,
       (err: Error, data: any) => {
         if (err) {
-          next(err);
+          return res
+            .status(403)
+            .json({ success: false, message: "token is invalid" });
         } else {
           req.user = data;
           next();
@@ -43,7 +45,7 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
       }
     );
   } catch (err) {
-    next(err);
+    return res.status(403).json({ success: false, message: err.message });
   }
 };
 
