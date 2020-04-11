@@ -94,10 +94,21 @@ export default class UserService {
   ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      User.update({ email: newEmail }, { where: { email: user.email } });
+      if (!newEmail)
+        result = this.UserServiceReturn(false, "newEmail is null", 400);
+      else {
+        const updateUser = await User.update(
+          { email: newEmail },
+          { where: { email: user.email } }
+        );
+        if (updateUser[0] == 1)
+          result = this.UserServiceReturn(true, updateUser, 200);
+        else result = this.UserServiceReturn(false, "user is not exists", 404);
+      }
     } catch (emailModifyError) {
       result = this.UserServiceReturn(false, emailModifyError.message, 500);
     } finally {
+      return result;
     }
   }
 }

@@ -51,12 +51,13 @@ export default (app: Router) => {
     "/account/emailmodify",
     middlewares.jwtVerify,
     async (req: Request, res: Response) => {
-      const newEmail = req.body.email;
+      const newEmail = req.body.newEmail;
       const {
         success,
         result,
         statusCode,
       } = await new UserService().emailModify(req.user!, newEmail);
+      res.status(statusCode).json({ success, result });
     }
   );
 
