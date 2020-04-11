@@ -44,12 +44,23 @@ export default class UserService {
         if (!exUser)
           result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
-          delete exUser.dataValues.id;
-          delete exUser.dataValues.password;
-          delete exUser.dataValues.createdAt;
-          delete exUser.dataValues.updatedAt;
-          const token = await this.newToken(exUser.dataValues);
-          if (token) result = this.UserServiceReturn(true, token, 200);
+          if (
+            !(await bcrypt.compare(user.password, exUser.dataValues.password))
+          )
+            result = this.UserServiceReturn(
+              false,
+              "password is defferent",
+              400
+            );
+          else {
+            delete exUser.dataValues.id;
+            delete exUser.dataValues.password;
+            delete exUser.dataValues.createdAt;
+            delete exUser.dataValues.updatedAt;
+            const token = await this.newToken(exUser.dataValues);
+            if (token) result = this.UserServiceReturn(true, token, 200);
+            else result = this.UserServiceReturn(false, "where token..?", 400);
+          }
         }
       }
     } catch (signInError) {
