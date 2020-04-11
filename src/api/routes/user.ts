@@ -81,7 +81,17 @@ export default (app: Router) => {
   );
 
   // 첫 로그인 체크
-  router.put("/login/check", (req: Request, res: Response) => {});
+  router.put(
+    "/login/check",
+    middlewares.jwtVerify,
+    async (req: Request, res: Response) => {
+      const check = req.body.check;
+      const { success, result, status } = await new UserService().loginCheck(
+        req.user!,
+        check
+      );
+    }
+  );
 
   // 회원 탈퇴
   router.delete("/withdrawal", (req: Request, res: Response) => {});

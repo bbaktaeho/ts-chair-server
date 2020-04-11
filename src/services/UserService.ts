@@ -121,6 +121,7 @@ export default class UserService {
     }
   }
 
+  // 비밀번호수정 비지니스 로직
   public async passwordModify(
     user: UserDTO,
     password: string,
@@ -151,6 +152,27 @@ export default class UserService {
       }
     } catch (passwordModifyError) {
       result = this.UserServiceReturn(false, passwordModifyError.message, 500);
+    } finally {
+      return result;
+    }
+  }
+
+  // 첫 로그인 체크 비지니스 로직
+  public async loginCheck(user: UserDTO, check: number): Promise<any> {
+    let result: { success: boolean; result: any; statusCode: number } | any;
+    try {
+      if (!check) result = this.UserServiceReturn(false, "check is null", 400);
+      else {
+        const updateUser = await User.update(
+          { login_check: check },
+          { where: { email: user.email } }
+        );
+        if (updateUser[0] == 1)
+          result = this.UserServiceReturn(true, updateUser, 200);
+        else result = this.UserServiceReturn(false, "update fail", 400);
+      }
+    } catch (loginCheckError) {
+      result = this.UserServiceReturn(false, loginCheckError.message, 500);
     } finally {
       return result;
     }
