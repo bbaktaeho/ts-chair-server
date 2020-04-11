@@ -26,30 +26,30 @@ export default class UserService {
   }
 
   private async sendMail(user: UserDTO): Promise<any> {
-    console.log(1);
     try {
       const transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
+        host: "smpt.gmail.com",
+        service: "gmail",
+        port: 465,
+        secure: false,
         auth: {
           user: config.serviceEmail, // generated ethereal user
           pass: config.servicePassword, // generated ethereal password
         },
       });
-      console.log(2);
 
       const info = await transporter.sendMail({
-        from: config.serviceEmail, // sender address
+        from: "🔥의자소통(chairCommunication) <inuchair@gmail.com>", // sender address
         to: user.email, // list of receivers
-        subject: "🔥의자소통(chairCommunication) ✔", // Subject line
+        subject: "🔥test ✔", // Subject line
         text: "Hello world?", // plain text body
         html: "<b>Hello world?</b>", // html body
       });
-      if (info) console.log(info);
-      else console.log(info);
+      if (info) return true;
+      else return false;
     } catch (sendMailError) {
-      console.log(sendMailError.message);
-    } finally {
-      console.log("finally");
+      console.error(sendMailError.message);
+      return false;
     }
   }
 
@@ -227,8 +227,9 @@ export default class UserService {
         if (!selectUser)
           result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
-          await this.sendMail(user);
-          result = this.UserServiceReturn(true, "check your email", 200);
+          if (!(await this.sendMail(user)))
+            result = this.UserServiceReturn(false, "failed to send", 400);
+          else result = this.UserServiceReturn(true, "check your email", 200);
         }
       }
     } catch (findPasswordError) {
