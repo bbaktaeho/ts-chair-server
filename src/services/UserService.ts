@@ -90,7 +90,7 @@ export default class UserService {
               400
             );
           else {
-            delete exUser.password;
+            exUser.setDataValue("password", "비번 유출 안되지롱~");
             const token = await this.newToken(exUser);
             if (token) result = this.UserServiceReturn(true, token, 200);
             else result = this.UserServiceReturn(false, "where token..?", 400);
