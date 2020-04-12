@@ -20,7 +20,6 @@ export default class PostureService {
         UserId: user.id,
         ...postures,
       });
-      console.log(newPostures);
       result = this.PostureServiceReturn(true, newPostures, 200);
     } catch (saveError) {
       result = this.PostureServiceReturn(false, saveError.message, 500);

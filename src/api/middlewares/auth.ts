@@ -1,6 +1,7 @@
 import { verify, sign } from "jsonwebtoken";
 import config from "../../config";
 import { Request, Response, NextFunction } from "express";
+import User from "../../models/user";
 
 /**
  * We are assuming that the JWT will come in a header with the form
@@ -33,14 +34,21 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
     verify(
       req.get("token") as string,
       config.jwtSecret,
-      (err: Error, data: any) => {
+      async (err: Error, data: any) => {
         if (err) {
           return res
             .status(403)
             .json({ success: false, message: "token is invalid" });
         } else {
-          req.user = data;
-          next();
+          const user = await User.findOne({ where: { id: data.id } });
+          if (!user)
+            res
+              .status(403)
+              .json({ success: false, message: "user is not exists" });
+          else {
+            req.user = data;
+            next();
+          }
         }
       }
     );

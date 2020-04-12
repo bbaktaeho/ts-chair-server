@@ -87,7 +87,6 @@ export default class UserService {
               400
             );
           else {
-            delete exUser.dataValues.id;
             delete exUser.dataValues.password;
             delete exUser.dataValues.createdAt;
             delete exUser.dataValues.updatedAt;
