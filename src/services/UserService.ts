@@ -79,7 +79,10 @@ export default class UserService {
           result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
           if (
-            !(await bcrypt.compare(user.password, exUser.dataValues.password))
+            !(await bcrypt.compare(
+              user.password,
+              exUser.getDataValue("password")
+            ))
           )
             result = this.UserServiceReturn(
               false,
@@ -87,10 +90,8 @@ export default class UserService {
               400
             );
           else {
-            delete exUser.dataValues.password;
-            delete exUser.dataValues.createdAt;
-            delete exUser.dataValues.updatedAt;
-            const token = await this.newToken(exUser.dataValues);
+            delete exUser.password;
+            const token = await this.newToken(exUser);
             if (token) result = this.UserServiceReturn(true, token, 200);
             else result = this.UserServiceReturn(false, "where token..?", 400);
           }
@@ -173,7 +174,7 @@ export default class UserService {
         if (!selectUser)
           result = this.UserServiceReturn(false, "user is not exists", 400);
         else {
-          if (!(await bcrypt.compare(password, selectUser.dataValues.password)))
+          if (!(await bcrypt.compare(password, selectUser.password)))
             result = this.UserServiceReturn(
               false,
               "password is defferent",
@@ -284,7 +285,7 @@ export default class UserService {
         result = this.UserServiceReturn(false, "password is null", 400);
       else {
         const selectUser = await User.findOne({ where: { email: user.email } });
-        if (!(await bcrypt.compare(password, selectUser.dataValues.password)))
+        if (!(await bcrypt.compare(password, selectUser!.password)))
           result = this.UserServiceReturn(false, "password is different", 400);
         else {
           const deleteUser = await User.destroy({
