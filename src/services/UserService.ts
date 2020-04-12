@@ -140,13 +140,19 @@ export default class UserService {
       if (!newEmail)
         result = this.UserServiceReturn(false, "newEmail is null", 400);
       else {
-        const updateUser = await User.update(
-          { email: newEmail },
-          { where: { email: user.email } }
-        );
-        if (updateUser[0] == 1)
-          result = this.UserServiceReturn(true, updateUser, 200);
-        else result = this.UserServiceReturn(false, "user is not exists", 404);
+        const exUser = await User.findOne({ where: { email: newEmail } });
+        if (!exUser) {
+          const updateUser = await User.update(
+            { email: newEmail },
+            { where: { email: user.email } }
+          );
+          if (updateUser[0] == 1)
+            result = this.UserServiceReturn(true, updateUser, 200);
+          else
+            result = this.UserServiceReturn(false, "user is not exists", 404);
+        } else {
+          result = this.UserServiceReturn(false, "email is exists", 400);
+        }
       }
     } catch (emailModifyError) {
       result = this.UserServiceReturn(false, emailModifyError.message, 500);
