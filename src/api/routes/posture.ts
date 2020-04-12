@@ -8,11 +8,15 @@ export default (app: Router) => {
   app.use("/posture", router);
 
   router.post("/save", middlewares.jwtVerify, async (req, res) => {
-    if (!Array.isArray(req.body.postures))
+    if (!Array.isArray(req.body.postures) && req.body.postures.length != 9)
       return res
         .status(400)
         .json({ success: false, message: "posture is not array" });
     const postures: PostureDTO = { ...req.body.postures };
-    const result = await new PostureService().save(postures, req.user!);
+    const { success, result, statusCode } = await new PostureService().save(
+      postures,
+      req.user!
+    );
+    res.status(statusCode).json({ success, message: result });
   });
 };
