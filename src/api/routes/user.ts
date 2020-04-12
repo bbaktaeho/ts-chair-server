@@ -2,7 +2,6 @@ import { Router, Request, Response } from "express";
 import middlewares from "../middlewares";
 import UserService from "../../services/UserService";
 import { UserDTO } from "../../interface/UserDTO";
-import * as crypto from "crypto";
 const router = Router();
 
 export default (app: Router) => {

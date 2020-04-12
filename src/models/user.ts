@@ -51,5 +51,7 @@ User.init(
   }
 );
 
-export const associate = (db: dbType) => {};
+export const associate = (db: dbType) => {
+  db.User.hasMany(db.Posture, { as: "Postures" });
+};
 export default User;
