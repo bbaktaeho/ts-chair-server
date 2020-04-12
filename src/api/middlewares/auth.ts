@@ -43,7 +43,7 @@ const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
           const user = await User.findOne({ where: { id: data.id } });
           if (!user)
             res
-              .status(403)
+              .status(404)
               .json({ success: false, message: "user is not exists" });
           else {
             req.user = data;
