@@ -6,7 +6,7 @@ type Config = {
   password: string;
   database: string;
   host: string;
-  [key: string]: string;
+  [key: string]: string | any;
 };
 interface IConfigGroup {
   development: Config;
@@ -20,12 +20,14 @@ const dbConfig: IConfigGroup = {
     database: "real_chair_database",
     host: process.env.DB_HOST!,
     dialect: "mysql",
+    logging: false,
   },
   test: {
     username: "root",
     password: process.env.DB_PASSWORD!,
     database: "real_chair_database",
     host: process.env.DB_HOST!,
+    logging: false,
     dialect: "mysql",
   },
   production: {
@@ -33,6 +35,7 @@ const dbConfig: IConfigGroup = {
     password: process.env.DB_PASSWORD!,
     database: "real_chair_database",
     host: process.env.DB_HOST!,
+    logging: false,
     dialect: "mysql",
   },
 };
