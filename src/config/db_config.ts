@@ -20,6 +20,7 @@ const dbConfig: IConfigGroup = {
     database: "real_chair_database",
     host: process.env.DB_HOST!,
     dialect: "mysql",
+    timezone: "+9:00",
   },
   test: {
     username: "root",
@@ -27,6 +28,7 @@ const dbConfig: IConfigGroup = {
     database: "real_chair_database",
     host: process.env.DB_HOST!,
     dialect: "mysql",
+    timezone: "+9:00",
   },
   production: {
     username: "root",
@@ -34,6 +36,7 @@ const dbConfig: IConfigGroup = {
     database: "real_chair_database",
     host: process.env.DB_HOST!,
     dialect: "mysql",
+    timezone: "+9:00",
   },
 };
 

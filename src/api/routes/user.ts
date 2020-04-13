@@ -88,6 +88,8 @@ export default (app: Router) => {
 
   // 첫 로그인 체크 라우터
   router.put("/login/check", middlewares.jwtVerify, async (req, res) => {
+    console.log(req.headers);
+
     const check = req.body.check;
     const { success, result, statusCode } = await new UserService().loginCheck(
       req.user!,
