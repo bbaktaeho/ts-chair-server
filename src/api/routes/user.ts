@@ -20,7 +20,8 @@ export default (app: Router) => {
       tempData,
     } = await new UserService().signIn(user);
     if (success) {
-      res.setHeader("token", JSON.stringify(result));
+      res.setHeader("Authorization", result.toString());
+      // res.setHeader("token", JSON.stringify(result));
       res
         .status(statusCode)
         .json({ success, message: "login success", check: tempData });
