@@ -415,6 +415,8 @@ export default class UserService {
   ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
+      console.log(user);
+
       if (!(user.email && user.password))
         result = this.UserServiceReturn(false, "dto error", 400);
       else {
