@@ -13,12 +13,17 @@ export default (app: Router) => {
       email: req.body.email,
       password: req.body.password,
     };
-    const { success, result, statusCode } = await new UserService().signIn(
-      user
-    );
+    const {
+      success,
+      result,
+      statusCode,
+      tempData,
+    } = await new UserService().signIn(user);
     if (success) {
       res.setHeader("token", JSON.stringify(result));
-      res.status(statusCode).json({ success, message: "login success" });
+      res
+        .status(statusCode)
+        .json({ success, message: "login success", check: tempData });
     } else {
       res.status(statusCode).json({ success, message: result });
     }

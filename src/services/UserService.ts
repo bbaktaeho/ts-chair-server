@@ -35,9 +35,10 @@ export default class UserService {
   private UserServiceReturn(
     success: boolean,
     result: any,
-    statusCode: number
-  ): { success: boolean; result: any; statusCode: number } {
-    return { success, result, statusCode };
+    statusCode: number,
+    tempData?: any
+  ): { success: boolean; result: any; statusCode: number; tempData?: any } {
+    return { success, result, statusCode, tempData };
   }
 
   private async newToken(user: UserDTO): Promise<string | null> {
@@ -437,7 +438,13 @@ export default class UserService {
           else {
             exUser.setDataValue("password", "비번 유출 안되지롱~");
             const token = await this.newToken(exUser);
-            if (token) result = this.UserServiceReturn(true, token, 200);
+            if (token)
+              result = this.UserServiceReturn(
+                true,
+                token,
+                200,
+                exUser.login_check
+              );
             else result = this.UserServiceReturn(false, "where token..?", 400);
           }
         }
