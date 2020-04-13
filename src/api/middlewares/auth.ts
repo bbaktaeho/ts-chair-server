@@ -30,6 +30,8 @@ const getTokenFromHeader = (req: Request) => {
 };
 
 const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.headers);
+
   const token = getTokenFromHeader(req);
   try {
     verify(token as string, config.jwtSecret, async (err: Error, data: any) => {
