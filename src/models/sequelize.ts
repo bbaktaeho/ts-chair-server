@@ -10,6 +10,12 @@ const { database, username, password } = config.dbConfig[env];
 const sequelize = new Sequelize(database, username, password, {
   logging: false,
   ...config.dbConfig[env],
+  dialectOptions: {
+    charset: "utf8mb4",
+    dateStrings: true,
+    typeCast: true,
+  },
+  define: { timestamps: true },
 });
 
 export { sequelize };

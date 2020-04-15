@@ -14,10 +14,6 @@ import User from "../../models/user";
  */
 
 const getTokenFromHeader = (req: Request) => {
-  /**
-   * @TODO Edge and Internet Explorer do some weird things with the headers
-   * So I believe that this should handle more 'edge' cases ;)
-   */
   if (
     (req.headers.authorization &&
       req.headers.authorization.split(" ")[0] === "Token") ||
@@ -30,8 +26,6 @@ const getTokenFromHeader = (req: Request) => {
 };
 
 const jwtVerify = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.headers);
-
   const token = getTokenFromHeader(req);
   try {
     verify(token as string, config.jwtSecret, async (err: Error, data: any) => {
