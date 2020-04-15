@@ -16,13 +16,18 @@ export default class StatisticService {
   }
 
   private async dateFormat(userId: number, select: number, date: Date) {
-    const realDate = moment(date).format("YYYY-MM-DD");
-
     let result;
     switch (select) {
       case 1:
         result = await Posture.findAll({
-          where: { userId },
+          where: {
+            createdAt: {
+              [op.lt]: new Date(
+                moment(date).add(1, "d").format("YYYY-MM-DD HH:mm:ss")
+              ),
+              [op.gt]: new Date(moment(date).format("YYYY-MM-DD HH:mm:ss")),
+            },
+          },
         });
 
         break;
