@@ -15,11 +15,12 @@ export default class StatisticService {
     return { success, result, statusCode };
   }
 
-  private async dateFormat(userId: number, select: number, date: Date) {
+  private async postureExtract(userId: number, select: number, date: Date) {
     let result;
     switch (select) {
       case 1:
         result = await Posture.findAll({
+          attributes: ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9"],
           where: {
             createdAt: {
               [op.lt]: new Date(
@@ -52,11 +53,21 @@ export default class StatisticService {
       if (!moment(date).isValid())
         result = this.StatisticServiceReturn(false, "data is invalid", 400);
       else {
-        result = this.StatisticServiceReturn(
-          true,
-          await this.dateFormat(userId, select, date),
-          200
-        );
+        const extraction = await this.postureExtract(userId, select, date);
+        let sumOfExtraction: number[] = new Array(9).fill(0);
+        extraction!.forEach((e) => {
+          sumOfExtraction[0] += e.getDataValue("p1");
+          sumOfExtraction[1] += e.getDataValue("p2");
+          sumOfExtraction[2] += e.getDataValue("p3");
+          sumOfExtraction[3] += e.getDataValue("p4");
+          sumOfExtraction[4] += e.getDataValue("p5");
+          sumOfExtraction[5] += e.getDataValue("p6");
+          sumOfExtraction[6] += e.getDataValue("p7");
+          sumOfExtraction[7] += e.getDataValue("p8");
+          sumOfExtraction[8] += e.getDataValue("p9");
+        });
+
+        result = this.StatisticServiceReturn(true, sumOfExtraction, 200);
       }
     } catch (showError) {
       result = this.StatisticServiceReturn(false, showError.message, 500);
