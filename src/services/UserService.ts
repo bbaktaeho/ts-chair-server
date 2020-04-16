@@ -348,7 +348,7 @@ export default class UserService {
                             <tr>
                               <td class="button" height="45">
                                 <form
-                                  action="http://http://13.124.213.28:9000/temporary/password"
+                                  action="http://13.124.213.28:9000/api/users/temporary/password"
                                   method="POST"
                                 >
                                   <input

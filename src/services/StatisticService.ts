@@ -30,7 +30,6 @@ export default class StatisticService {
             },
           },
         });
-
         break;
       case 2:
         break;
