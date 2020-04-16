@@ -15,7 +15,6 @@ export default class PostureService {
   public async save(postures: PostureDTO, user: UserDTO): Promise<any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!postures.nonP) postures.nonP = 0;
       const newPostures = await Posture.create({
         UserId: user.id,
         ...postures,

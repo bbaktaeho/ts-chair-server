@@ -30,43 +30,33 @@ class Posture extends Model {
 
 Posture.init(
   {
+    p0: {
+      // 바른 자세
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     p1: {
+      // 걸터 앉은 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     p2: {
+      // 둔부 앞 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     p3: {
+      // 왼쪽으로 기울거나 오른 다리를 꼰 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     p4: {
+      // 오른쪽으로 기울거나 왼 다리를 꼰 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     p5: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    p6: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    p7: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    p8: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    p9: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    nonP: {
+      // 앞으로 숙인 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },

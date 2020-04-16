@@ -22,16 +22,12 @@ export default (app: Router) => {
       }
     }
     const postures: PostureDTO = {
-      p1: reqPostures[0],
-      p2: reqPostures[1],
-      p3: reqPostures[2],
-      p4: reqPostures[3],
-      p5: reqPostures[4],
-      p6: reqPostures[5],
-      p7: reqPostures[6],
-      p8: reqPostures[7],
-      p9: reqPostures[8],
-      nonP: reqPostures[9],
+      p0: reqPostures[0],
+      p1: reqPostures[1],
+      p2: reqPostures[2],
+      p3: reqPostures[3],
+      p4: reqPostures[4],
+      p5: reqPostures[5],
     };
 
     const { success, result, statusCode } = await new PostureService().save(
