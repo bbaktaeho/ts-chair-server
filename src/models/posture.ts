@@ -14,16 +14,12 @@ import { dbType } from "./index";
 class Posture extends Model {
   public readonly id!: number;
   public UserId!: number;
+  public p0!: number;
   public p1!: number;
   public p2!: number;
   public p3!: number;
   public p4!: number;
   public p5!: number;
-  public p6!: number;
-  public p7!: number;
-  public p8!: number;
-  public p9!: number;
-  public noneP!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -46,12 +42,12 @@ Posture.init(
       allowNull: false,
     },
     p3: {
-      // 왼쪽으로 기울거나 오른 다리를 꼰 자세
+      // 오른 다리를 꼰 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     p4: {
-      // 오른쪽으로 기울거나 왼 다리를 꼰 자세
+      // 왼 다리를 꼰 자세
       type: DataTypes.INTEGER,
       allowNull: false,
     },
