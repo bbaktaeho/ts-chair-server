@@ -53,17 +53,14 @@ export default class StatisticService {
         result = this.StatisticServiceReturn(false, "data is invalid", 400);
       else {
         const extraction = await this.postureExtract(userId, select, date);
-        let sumOfExtraction: number[] = new Array(9).fill(0);
+        let sumOfExtraction: number[] = new Array(5).fill(0);
         extraction!.forEach((e) => {
-          sumOfExtraction[0] += e.getDataValue("p1");
-          sumOfExtraction[1] += e.getDataValue("p2");
-          sumOfExtraction[2] += e.getDataValue("p3");
-          sumOfExtraction[3] += e.getDataValue("p4");
-          sumOfExtraction[4] += e.getDataValue("p5");
-          sumOfExtraction[5] += e.getDataValue("p6");
-          sumOfExtraction[6] += e.getDataValue("p7");
-          sumOfExtraction[7] += e.getDataValue("p8");
-          sumOfExtraction[8] += e.getDataValue("p9");
+          sumOfExtraction[0] += e.getDataValue("p0");
+          sumOfExtraction[1] += e.getDataValue("p1");
+          sumOfExtraction[2] += e.getDataValue("p2");
+          sumOfExtraction[3] += e.getDataValue("p3");
+          sumOfExtraction[4] += e.getDataValue("p4");
+          sumOfExtraction[5] += e.getDataValue("p5");
         });
 
         result = this.StatisticServiceReturn(true, sumOfExtraction, 200);

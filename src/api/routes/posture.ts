@@ -15,7 +15,7 @@ export default (app: Router) => {
         .status(400)
         .json({ success: false, message: "posture is not array" });
     if (Array.isArray(reqPostures)) {
-      if (reqPostures.length < 9) {
+      if (reqPostures.length < 5) {
         return res
           .status(400)
           .json({ success: false, message: "insufficient data" });
