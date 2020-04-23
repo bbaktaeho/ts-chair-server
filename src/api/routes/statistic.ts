@@ -22,6 +22,7 @@ export default (app: Router) => {
       res.status(statusCode).json({ success, message, statistics: result });
     }
   });
+
   router.get("/month", middlewares.jwtVerify, async (req, res) => {
     const date = req.query.date;
 
