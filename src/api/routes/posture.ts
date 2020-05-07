@@ -44,8 +44,8 @@ export default (app: Router) => {
     console.log(`${user} : ${posture}`);
     // res.json({ success: true, message: "dd", posture: "바른자세" });
     request.post(
-      { url: "http://172.31.43.41:9001/", formData: { posture } },
-      (err: Error, httpResponse, body) => {
+      { url: "http://172.31.43.41:9001/posture", formData: { posture } },
+      (err, httpResponse, body) => {
         if (err) console.log(err.message);
         else {
           console.log(`body : ${body}`);
