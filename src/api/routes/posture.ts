@@ -42,17 +42,17 @@ export default (app: Router) => {
   router.post("/inference", middlewares.jwtVerify, async (req, res) => {
     const { user, posture } = req.body;
     console.log(`${user} : ${posture}`);
-    res.json({ success: true, message: "dd", posture: "바른자세" });
-    // request.post(
-    //   { url: "http://13.124.213.28:9001/", formData: {} },
-    //   (err, httpResponse, body) => {
-    //     if (err) console.log(err.message);
-    //     else {
-    //       console.log(`body : ${body}`);
-    //       console.log(`httpResponse : ${httpResponse}`);
-    //       res.json({ success: true, message: "성공", posture: "바른자세" });
-    //     }
-    //   }
-    // );
+    // res.json({ success: true, message: "dd", posture: "바른자세" });
+    request.post(
+      { url: "http://172.31.43.41:9001/", formData: { posture } },
+      (err, httpResponse, body) => {
+        if (err) console.log(err.message);
+        else {
+          console.log(`body : ${body}`);
+          console.log(`httpResponse : ${httpResponse}`);
+          res.json({ success: true, message: "성공", posture: "바른자세" });
+        }
+      }
+    );
   });
 };
