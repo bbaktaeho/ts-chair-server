@@ -42,7 +42,6 @@ export default (app: Router) => {
   router.post("/inference", middlewares.jwtVerify, async (req, res) => {
     const user = req.user;
     const { posture } = req.body;
-    console.log(`${user} : ${posture}`);
     // res.json({ success: true, message: "dd", posture: "바른자세" });
     request.post(
       {
@@ -53,9 +52,7 @@ export default (app: Router) => {
       (err, httpResponse, body) => {
         if (err) console.log(err.message);
         else {
-          console.log(`httpResponse : ${JSON.stringify(httpResponse)}`);
-          console.log(`body : ${JSON.stringify(body)}`);
-          res.json({ success: true, message: "성공", posture: "바른자세" });
+          res.json(body);
         }
       }
     );
