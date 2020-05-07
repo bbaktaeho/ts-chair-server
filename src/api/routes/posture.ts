@@ -46,7 +46,9 @@ export default (app: Router) => {
     request.post(
       {
         url: "http://172.31.43.41:9001/posture",
-        formData: { posture: posture, id: "test", pw: "fdf" },
+        form: { posture: posture, id: "test", pw: "fdf" },
+        // formData: { posture: posture, id: "test", pw: "fdf" },
+        json: true,
       },
       (err, httpResponse, body) => {
         if (err) console.log(err.message);
