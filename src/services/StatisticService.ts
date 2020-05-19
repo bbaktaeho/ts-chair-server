@@ -118,4 +118,19 @@ export default class StatisticService {
       return result;
     }
   }
+
+  public async showComparison(userId: number): Promise<any> {
+    let result: any;
+    try {
+      const list = await Posture.findAll({
+        attributes: ["p0", "p1", "p2", "p3", "p4", "p5", "createdAt"],
+        where: { UserId: userId },
+      });
+      result = this.StatisticServiceReturn(true, list, 200);
+    } catch (err) {
+      result = this.StatisticServiceReturn(false, err.message, 500);
+    } finally {
+      return result!;
+    }
+  }
 }
