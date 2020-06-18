@@ -32,12 +32,7 @@ import * as crypto from "crypto";
 export default class UserService {
   constructor() {}
 
-  private UserServiceReturn(
-    success: boolean,
-    result: any,
-    statusCode: number,
-    tempData?: any
-  ): { success: boolean; result: any; statusCode: number; tempData?: any } {
+  private UserServiceReturn(success: boolean, result: any, statusCode: number, tempData?: any): { success: boolean; result: any; statusCode: number; tempData?: any } {
     return { success, result, statusCode, tempData };
   }
 
@@ -63,6 +58,7 @@ export default class UserService {
           pass: config.servicePassword, // generated ethereal password
         },
       });
+      console.log(transporter);
 
       const info = await transporter.sendMail({
         from: "🔥의자소통(chairCommunication) <inuchair@gmail.com>", // sender address
@@ -398,7 +394,11 @@ export default class UserService {
 `, // html body
       });
       if (info) return true;
-      else return false;
+      else {
+        console.log(`info : `, info);
+
+        return false;
+      }
     } catch (sendMailError) {
       console.error(sendMailError.message);
       return false;
@@ -410,41 +410,21 @@ export default class UserService {
    */
 
   // 로그인 비지니스 로직
-  public async signIn(
-    user: UserDTO
-  ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
+  public async signIn(user: UserDTO): Promise<{ success: boolean; result: any; statusCode: number } | any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!(user.email && user.password))
-        result = this.UserServiceReturn(false, "dto error", 400);
+      if (!(user.email && user.password)) result = this.UserServiceReturn(false, "dto error", 400);
       else {
         const exUser = await User.findOne({
           where: { email: user.email },
         });
-        if (!exUser)
-          result = this.UserServiceReturn(false, "user is not exists", 404);
+        if (!exUser) result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
-          if (
-            !(await bcrypt.compare(
-              user.password,
-              exUser.getDataValue("password")
-            ))
-          )
-            result = this.UserServiceReturn(
-              false,
-              "password is defferent",
-              400
-            );
+          if (!(await bcrypt.compare(user.password, exUser.getDataValue("password")))) result = this.UserServiceReturn(false, "password is defferent", 400);
           else {
             exUser.setDataValue("password", "비번 유출 안되지롱~");
             const token = await this.newToken(exUser);
-            if (token)
-              result = this.UserServiceReturn(
-                true,
-                token,
-                200,
-                exUser.login_check
-              );
+            if (token) result = this.UserServiceReturn(true, token, 200, exUser.login_check);
             else result = this.UserServiceReturn(false, "where token..?", 400);
           }
         }
@@ -457,13 +437,10 @@ export default class UserService {
   }
 
   // 회원가입 비지니스 로직
-  public async signUp(
-    user: UserDTO
-  ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
+  public async signUp(user: UserDTO): Promise<{ success: boolean; result: any; statusCode: number } | any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!(user.email && user.name && user.password))
-        result = this.UserServiceReturn(false, "dto error", 400);
+      if (!(user.email && user.name && user.password)) result = this.UserServiceReturn(false, "dto error", 400);
       else if (await User.findOne({ where: { email: user.email } })) {
         result = this.UserServiceReturn(false, "overlap", 409);
       } else {
@@ -483,25 +460,16 @@ export default class UserService {
   }
 
   // 이메일수정 비지니스 로직
-  public async emailModify(
-    user: UserDTO,
-    newEmail: string
-  ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
+  public async emailModify(user: UserDTO, newEmail: string): Promise<{ success: boolean; result: any; statusCode: number } | any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!newEmail)
-        result = this.UserServiceReturn(false, "newEmail is null", 400);
+      if (!newEmail) result = this.UserServiceReturn(false, "newEmail is null", 400);
       else {
         const exUser = await User.findOne({ where: { email: newEmail } });
         if (!exUser) {
-          const updateUser = await User.update(
-            { email: newEmail },
-            { where: { email: user.email } }
-          );
-          if (updateUser[0] == 1)
-            result = this.UserServiceReturn(true, updateUser, 200);
-          else
-            result = this.UserServiceReturn(false, "user is not exists", 404);
+          const updateUser = await User.update({ email: newEmail }, { where: { email: user.email } });
+          if (updateUser[0] == 1) result = this.UserServiceReturn(true, updateUser, 200);
+          else result = this.UserServiceReturn(false, "user is not exists", 404);
         } else {
           result = this.UserServiceReturn(false, "email is exists", 400);
         }
@@ -514,38 +482,19 @@ export default class UserService {
   }
 
   // 비밀번호 수정 비지니스 로직
-  public async passwordModify(
-    user: UserDTO,
-    password: string,
-    newPassword: string
-  ): Promise<{ success: boolean; result: any; statusCode: number } | any> {
+  public async passwordModify(user: UserDTO, password: string, newPassword: string): Promise<{ success: boolean; result: any; statusCode: number } | any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!(password && newPassword))
-        result = this.UserServiceReturn(
-          false,
-          "password or newPassword is null",
-          400
-        );
+      if (!(password && newPassword)) result = this.UserServiceReturn(false, "password or newPassword is null", 400);
       else {
         const selectUser = await User.findOne({ where: { email: user.email } });
-        if (!selectUser)
-          result = this.UserServiceReturn(false, "user is not exists", 400);
+        if (!selectUser) result = this.UserServiceReturn(false, "user is not exists", 400);
         else {
-          if (!(await bcrypt.compare(password, selectUser.password)))
-            result = this.UserServiceReturn(
-              false,
-              "password is defferent",
-              400
-            );
+          if (!(await bcrypt.compare(password, selectUser.password))) result = this.UserServiceReturn(false, "password is defferent", 400);
           else {
             const hashPassword = await bcrypt.hash(newPassword, 12);
-            const updateUser = await User.update(
-              { password: hashPassword },
-              { where: { email: user.email } }
-            );
-            if (updateUser[0] == 1)
-              result = this.UserServiceReturn(true, updateUser, 200);
+            const updateUser = await User.update({ password: hashPassword }, { where: { email: user.email } });
+            if (updateUser[0] == 1) result = this.UserServiceReturn(true, updateUser, 200);
             else result = this.UserServiceReturn(false, "update fail", 400);
           }
         }
@@ -563,12 +512,8 @@ export default class UserService {
     try {
       if (!check) result = this.UserServiceReturn(false, "check is null", 400);
       else {
-        const updateUser = await User.update(
-          { login_check: check },
-          { where: { email: user.email } }
-        );
-        if (updateUser[0] == 1)
-          result = this.UserServiceReturn(true, updateUser, 200);
+        const updateUser = await User.update({ login_check: check }, { where: { email: user.email } });
+        if (updateUser[0] == 1) result = this.UserServiceReturn(true, updateUser, 200);
         else result = this.UserServiceReturn(false, "update fail", 400);
       }
     } catch (loginCheckError) {
@@ -582,17 +527,14 @@ export default class UserService {
   public async findPassword(user: UserDTO): Promise<any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!(user.email && user.name))
-        result = this.UserServiceReturn(false, "dto error", 400);
+      if (!(user.email && user.name)) result = this.UserServiceReturn(false, "dto error", 400);
       else {
         const selectUser = await User.findOne({
           where: { email: user.email, name: user.name },
         });
-        if (!selectUser)
-          result = this.UserServiceReturn(false, "user is not exists", 404);
+        if (!selectUser) result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
-          if (!(await this.sendMail(user)))
-            result = this.UserServiceReturn(false, "failed to send", 400);
+          if (!(await this.sendMail(user))) result = this.UserServiceReturn(false, "failed to send", 400);
           else result = this.UserServiceReturn(true, "check your email", 200);
         }
       }
@@ -607,29 +549,19 @@ export default class UserService {
   public async temporaryPassword(user: UserDTO): Promise<any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!(user.email && user.password))
-        result = this.UserServiceReturn(false, "dto error", 400);
+      if (!(user.email && user.password)) result = this.UserServiceReturn(false, "dto error", 400);
       else {
         const selectUser = await User.findOne({ where: { email: user.email } });
-        if (!selectUser)
-          result = this.UserServiceReturn(false, "user is not exists", 404);
+        if (!selectUser) result = this.UserServiceReturn(false, "user is not exists", 404);
         else {
           const hashPassword = await bcrypt.hash(user.password, 12);
-          const updateUser = await User.update(
-            { password: hashPassword },
-            { where: { email: user.email } }
-          );
-          if (updateUser[0] == 1)
-            result = this.UserServiceReturn(true, "update", 200);
+          const updateUser = await User.update({ password: hashPassword }, { where: { email: user.email } });
+          if (updateUser[0] == 1) result = this.UserServiceReturn(true, "update", 200);
           else result = this.UserServiceReturn(false, "failed", 400);
         }
       }
     } catch (temporaryPasswordError) {
-      result = this.UserServiceReturn(
-        false,
-        temporaryPasswordError.message,
-        500
-      );
+      result = this.UserServiceReturn(false, temporaryPasswordError.message, 500);
     } finally {
       return result;
     }
@@ -639,18 +571,15 @@ export default class UserService {
   public async withdrawal(user: UserDTO, password: string): Promise<any> {
     let result: { success: boolean; result: any; statusCode: number } | any;
     try {
-      if (!password)
-        result = this.UserServiceReturn(false, "password is null", 400);
+      if (!password) result = this.UserServiceReturn(false, "password is null", 400);
       else {
         const selectUser = await User.findOne({ where: { email: user.email } });
-        if (!(await bcrypt.compare(password, selectUser!.password)))
-          result = this.UserServiceReturn(false, "password is different", 400);
+        if (!(await bcrypt.compare(password, selectUser!.password))) result = this.UserServiceReturn(false, "password is different", 400);
         else {
           const deleteUser = await User.destroy({
             where: { email: user.email },
           });
-          if (deleteUser == 1)
-            result = this.UserServiceReturn(true, deleteUser, 200);
+          if (deleteUser == 1) result = this.UserServiceReturn(true, deleteUser, 200);
           else result = this.UserServiceReturn(false, "withdrawal fail", 400);
         }
       }

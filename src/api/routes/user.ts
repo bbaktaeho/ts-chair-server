@@ -13,18 +13,11 @@ export default (app: Router) => {
       email: req.body.email,
       password: req.body.password,
     };
-    const {
-      success,
-      result,
-      statusCode,
-      tempData,
-    } = await new UserService().signIn(user);
+    const { success, result, statusCode, tempData } = await new UserService().signIn(user);
     if (success) {
       res.setHeader("Authorization", result.toString());
       // res.setHeader("token", JSON.stringify(result));
-      res
-        .status(statusCode)
-        .json({ success, message: "login success", check: tempData });
+      res.status(statusCode).json({ success, message: "login success", check: tempData });
     } else {
       res.status(statusCode).json({ success, message: result });
     }
@@ -37,64 +30,35 @@ export default (app: Router) => {
       password: req.body.password,
       name: req.body.name,
     };
-    const { success, result, statusCode } = await new UserService().signUp(
-      user
-    );
+    const { success, result, statusCode } = await new UserService().signUp(user);
     res.status(statusCode).json({ success, message: result });
   });
 
   // 내 정보 라우터
-  router.get(
-    "/account",
-    middlewares.jwtVerify,
-    async (req: Request, res: Response) => {
-      res.status(200).json({ success: true, message: "", user: req.user });
-    }
-  );
+  router.get("/account", middlewares.jwtVerify, async (req: Request, res: Response) => {
+    res.status(200).json({ success: true, message: "", user: req.user });
+  });
 
   // 이메일 수정 라우터
-  router.put(
-    "/account/emailmodify",
-    middlewares.jwtVerify,
-    async (req: Request, res: Response) => {
-      const newEmail = req.body.newEmail;
-      const {
-        success,
-        result,
-        statusCode,
-      } = await new UserService().emailModify(req.user!, newEmail);
-      res.status(statusCode).json({ success, message: result });
-    }
-  );
+  router.put("/account/emailmodify", middlewares.jwtVerify, async (req: Request, res: Response) => {
+    const newEmail = req.body.newEmail;
+    const { success, result, statusCode } = await new UserService().emailModify(req.user!, newEmail);
+    res.status(statusCode).json({ success, message: result });
+  });
 
   // 비밀번호 수정 라우터
-  router.put(
-    "/account/passwordmodify",
-    middlewares.jwtVerify,
-    async (req, res) => {
-      const { password, newPassword } = req.body;
-      const {
-        success,
-        result,
-        statusCode,
-      } = await new UserService().passwordModify(
-        req.user!,
-        password,
-        newPassword
-      );
-      res.status(statusCode).json({ success, message: result });
-    }
-  );
+  router.put("/account/passwordmodify", middlewares.jwtVerify, async (req, res) => {
+    const { password, newPassword } = req.body;
+    const { success, result, statusCode } = await new UserService().passwordModify(req.user!, password, newPassword);
+    res.status(statusCode).json({ success, message: result });
+  });
 
   // 첫 로그인 체크 라우터
   router.put("/login/check", middlewares.jwtVerify, async (req, res) => {
     console.log(req.headers);
 
     const check = req.body.check;
-    const { success, result, statusCode } = await new UserService().loginCheck(
-      req.user!,
-      check
-    );
+    const { success, result, statusCode } = await new UserService().loginCheck(req.user!, check);
     res.status(statusCode).json({ success, message: result });
   });
 
@@ -104,11 +68,9 @@ export default (app: Router) => {
       email: req.body.email,
       name: req.body.name,
     };
-    const {
-      success,
-      result,
-      statusCode,
-    } = await new UserService().findPassword(user);
+    console.log(user);
+
+    const { success, result, statusCode } = await new UserService().findPassword(user);
     res.status(statusCode).json({ success, message: result });
   });
 
@@ -118,26 +80,14 @@ export default (app: Router) => {
       email: req.body.email,
       password: req.body.tmpPassword,
     };
-    const {
-      success,
-      result,
-      statusCode,
-    } = await new UserService().temporaryPassword(user);
+    const { success, result, statusCode } = await new UserService().temporaryPassword(user);
     res.status(statusCode).json({ success, message: result });
   });
 
   // 회원 탈퇴 라우터
-  router.delete(
-    "/withdrawal",
-    middlewares.jwtVerify,
-    async (req: Request, res: Response) => {
-      const password = req.body.password;
-      const {
-        success,
-        result,
-        statusCode,
-      } = await new UserService().withdrawal(req.user!, password);
-      res.status(statusCode).json({ success, message: result });
-    }
-  );
+  router.delete("/withdrawal", middlewares.jwtVerify, async (req: Request, res: Response) => {
+    const password = req.body.password;
+    const { success, result, statusCode } = await new UserService().withdrawal(req.user!, password);
+    res.status(statusCode).json({ success, message: result });
+  });
 };
