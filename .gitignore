@@ -1,4 +1,11 @@
+# 환경 변수
 .env
+
+# node modules
 node_modules
+
+## 배포 코드
 dist
+
+## key 파일들
 keys
