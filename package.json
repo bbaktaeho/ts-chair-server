@@ -49,7 +49,7 @@
     "sequelize": "5.21.6",
     "sequelize-cli": "5.5.1",
     "typescript": "3.8.3",
-    "validator": "13.0.0",
+    "validator": "13.7.0",
     "winston": "3.2.1"
   },
   "devDependencies": {
